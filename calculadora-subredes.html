@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calculadora de Subredes — Eduardo Andrés</title>
+<meta name="description" content="Calculadora de subredes IP/CIDR: máscara, rango de red, hosts disponibles y planificador de subneteo." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231B1712'/%3E%3Crect x='4' y='16' width='4' height='12' rx='1' fill='%23B84B32'/%3E%3Crect x='11' y='8' width='4' height='20' rx='1' fill='%23E8A33D'/%3E%3Crect x='18' y='13' width='4' height='15' rx='1' fill='%23B84B32'/%3E%3Crect x='25' y='5' width='4' height='23' rx='1' fill='%23E8A33D'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1B1712; --surface:#241F18; --surface2:#2C2519; --line:#3A3226;
+    --amber:#E8A33D; --rust:#B84B32; --text:#F2ECE1; --muted:#9C9284;
+  }
+  html[data-theme="light"]{
+    --bg:#F2ECE1; --surface:#FFFFFF; --surface2:#EAE2D2; --line:#D9CDB4;
+    --amber:#C97A1E; --rust:#A23A24; --text:#241F18; --muted:#726A5A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{ background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; transition:background .3s ease, color .3s ease; }
+  h1,h2,h3{font-family:'Oswald',sans-serif; font-weight:600;}
+  .wrap{max-width:820px; margin:0 auto; padding:2.5rem 1.5rem 4rem;}
+  a{color:var(--amber);}
+  .back{display:inline-flex; align-items:center; gap:0.4rem; color:var(--muted); text-decoration:none; font-size:0.85rem; font-family:'IBM Plex Mono',monospace;}
+  .top-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;}
+  .theme-toggle{width:38px; height:38px; border-radius:50%; background:var(--surface); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1rem;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--amber);}
+  h1{font-size:clamp(1.8rem,5vw,2.4rem); margin-top:0.4rem;}
+  p.sub{color:var(--muted); margin-top:0.5rem; font-size:0.95rem;}
+
+  .tabs{display:flex; gap:0.5rem; margin-top:2rem; border-bottom:1px solid var(--line);}
+  .tab-btn{background:none; border:none; color:var(--muted); font-size:0.95rem; padding:0.6rem 0.2rem; cursor:pointer; position:relative; margin-right:1rem; font-weight:500;}
+  .tab-btn.active{color:var(--amber);}
+  .tab-btn.active::after{content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--amber);}
+  .tab-panel{display:none; margin-top:1.5rem;}
+  .tab-panel.active{display:block;}
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:1.25rem 1.25rem 1.5rem; margin-top:1.25rem;}
+  .card-title{color:var(--muted); font-family:'IBM Plex Mono',monospace; font-size:0.7rem; text-transform:uppercase; margin-bottom:0.9rem;}
+
+  .input-row{display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center;}
+  input[type=text], input[type=number], select{
+    background:var(--surface2); color:var(--text); border:1px solid var(--line);
+    border-radius:8px; padding:0.6rem 0.75rem; font-size:0.95rem; font-family:'IBM Plex Mono',monospace;
+  }
+  input[type=text]{flex:1; min-width:160px;}
+  .slash{color:var(--muted); font-family:'IBM Plex Mono',monospace; font-size:1.1rem;}
+  input[type=number]{width:70px;}
+  .btn{background:var(--amber); color:#241608; border:none; border-radius:8px; padding:0.6rem 1.1rem; font-weight:600; font-size:0.9rem; cursor:pointer;}
+  .error{color:#F3A9A0; margin-top:0.9rem; font-size:0.9rem;}
+
+  .result-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0.9rem; margin-top:1.25rem;}
+  .result-item{background:var(--surface2); border-radius:10px; padding:0.8rem 1rem;}
+  .result-item .label{color:var(--muted); font-size:0.72rem; text-transform:uppercase; font-family:'IBM Plex Mono',monospace;}
+  .result-item .value{font-family:'IBM Plex Mono',monospace; font-size:1.05rem; margin-top:0.25rem; word-break:break-all;}
+  .badge{display:inline-block; font-size:0.72rem; padding:0.15rem 0.55rem; border-radius:99px; margin-top:0.3rem;}
+  .badge-private{background:#2A3F2E; color:#8FD19E;}
+  .badge-public{background:#3A2E20; color:#E8A33D;}
+  html[data-theme="light"] .badge-private{background:#DDEEE0; color:#2A7A3D;}
+  html[data-theme="light"] .badge-public{background:#F3E4CC; color:#A5650F;}
+
+  .binary-block{font-family:'IBM Plex Mono',monospace; font-size:0.8rem; color:var(--muted); margin-top:1rem; line-height:1.9;}
+  .binary-block .row{display:flex; gap:0.6rem;}
+  .binary-block .row .k{width:110px; flex-shrink:0; color:var(--text);}
+  .octet{padding:0 2px;}
+  .octet.net{color:var(--amber);}
+  .octet.host{color:var(--rust);}
+
+  table{width:100%; border-collapse:collapse; font-size:0.8rem; margin-top:1rem;}
+  th{text-align:left; color:var(--muted); font-weight:500; padding-bottom:0.5rem; border-bottom:1px solid var(--line);}
+  td{padding:0.45rem 0.6rem 0.45rem 0; border-bottom:1px solid var(--line); font-family:'IBM Plex Mono',monospace;}
+  tr:last-child td{border-bottom:none;}
+  .more-hint{color:var(--muted); font-size:0.8rem; margin-top:0.6rem; text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top-row">
+    <a class="back" href="index.html">← volver al inicio</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">🌙</button>
+  </div>
+
+  <div class="eyebrow">herramienta de redes</div>
+  <h1>Calculadora de Subredes</h1>
+  <p class="sub">IP + CIDR → máscara, rango de red y hosts disponibles. Todo se calcula en tu navegador.</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="calc">Calculadora</button>
+    <button class="tab-btn" data-tab="split">Dividir en subredes</button>
+  </div>
+
+  <div class="tab-panel active" id="panel-calc">
+    <div class="card">
+      <div class="card-title">Dirección IP y prefijo</div>
+      <div class="input-row">
+        <input type="text" id="ipInput" placeholder="192.168.1.0" value="192.168.1.0" />
+        <span class="slash">/</span>
+        <input type="number" id="cidrInput" min="0" max="32" value="24" />
+        <button class="btn" id="calcBtn">Calcular</button>
+      </div>
+      <div class="error" id="calcError" style="display:none"></div>
+    </div>
+
+    <div class="card" id="calcResultCard" style="display:none">
+      <div class="card-title">Resultado</div>
+      <div class="result-grid" id="resultGrid"></div>
+      <div class="binary-block" id="binaryBlock"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-split">
+    <div class="card">
+      <div class="card-title">Red base</div>
+      <div class="input-row">
+        <input type="text" id="baseIp" placeholder="192.168.1.0" value="192.168.1.0" />
+        <span class="slash">/</span>
+        <input type="number" id="baseCidr" min="0" max="32" value="24" />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">¿Cómo quieres dividirla?</div>
+      <div class="input-row" style="margin-bottom:0.9rem;">
+        <select id="splitMode">
+          <option value="subnets">Número de subredes necesarias</option>
+          <option value="hosts">Hosts necesarios por subred</option>
+        </select>
+        <input type="number" id="splitValue" min="1" value="4" style="width:100px;" />
+        <button class="btn" id="splitBtn">Dividir</button>
+      </div>
+      <div class="error" id="splitError" style="display:none"></div>
+    </div>
+
+    <div class="card" id="splitResultCard" style="display:none">
+      <div class="card-title">Subredes resultantes</div>
+      <div id="splitSummary" style="color:var(--muted); font-size:0.85rem; margin-bottom:0.5rem;"></div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Red</th><th>Rango usable</th><th>Broadcast</th></tr></thead>
+          <tbody id="splitTableBody"></tbody>
+        </table>
+      </div>
+      <div class="more-hint" id="moreHint" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- Tema ----------
+  const themeToggle = document.getElementById('themeToggle');
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme === 'light'){ document.documentElement.setAttribute('data-theme','light'); themeToggle.textContent='☀️'; }
+  themeToggle.addEventListener('click', () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if(isLight){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','dark'); themeToggle.textContent='🌙'; }
+    else { document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); themeToggle.textContent='☀️'; }
+  });
+
+  // ---------- Tabs ----------
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach((b) => b.classList.toggle('active', b===btn));
+      document.querySelectorAll('.tab-panel').forEach((p) => p.classList.toggle('active', p.id === 'panel-'+btn.dataset.tab));
+    });
+  });
+
+  // ---------- Utilidades IP ----------
+  function parseIp(ip){
+    const parts = ip.trim().split('.');
+    if(parts.length !== 4) return null;
+    const octets = parts.map((p) => parseInt(p,10));
+    if(octets.some((o) => isNaN(o) || o < 0 || o > 255)) return null;
+    return octets;
+  }
+  function octetsToInt(octets){ return ((octets[0]<<24) | (octets[1]<<16) | (octets[2]<<8) | octets[3]) >>> 0; }
+  function intToOctets(int){ return [(int>>>24)&255, (int>>>16)&255, (int>>>8)&255, int&255]; }
+  function intToIp(int){ return intToOctets(int).join('.'); }
+  function cidrToMaskInt(cidr){ return cidr === 0 ? 0 : (0xFFFFFFFF << (32-cidr)) >>> 0; }
+  function toBinary8(n){ return n.toString(2).padStart(8,'0'); }
+
+  function classify(firstOctet){
+    if(firstOctet === 127) return 'A (loopback)';
+    if(firstOctet < 128) return 'A';
+    if(firstOctet < 192) return 'B';
+    if(firstOctet < 224) return 'C';
+    if(firstOctet < 240) return 'D (multicast)';
+    return 'E (experimental)';
+  }
+  function isPrivate(octets){
+    const [a,b] = octets;
+    if(a === 10) return true;
+    if(a === 172 && b >= 16 && b <= 31) return true;
+    if(a === 192 && b === 168) return true;
+    if(a === 169 && b === 254) return true;
+    if(a === 127) return true;
+    return false;
+  }
+
+  function computeSubnet(ipStr, cidr){
+    const octets = parseIp(ipStr);
+    if(!octets) throw new Error('IP inválida. Usa el formato 192.168.1.1');
+    if(isNaN(cidr) || cidr < 0 || cidr > 32) throw new Error('El prefijo CIDR debe estar entre 0 y 32.');
+
+    const ipInt = octetsToInt(octets);
+    const maskInt = cidrToMaskInt(cidr);
+    const networkInt = ipInt & maskInt;
+    const wildcardInt = (~maskInt) >>> 0;
+    const broadcastInt = (networkInt | wildcardInt) >>> 0;
+    const totalAddresses = Math.pow(2, 32-cidr);
+    const usable = cidr >= 31 ? (cidr === 32 ? 1 : 2) : totalAddresses - 2;
+    const firstUsable = cidr >= 31 ? networkInt : networkInt + 1;
+    const lastUsable = cidr >= 31 ? broadcastInt : broadcastInt - 1;
+
+    return {
+      ip: octets, cidr, ipInt, maskInt, networkInt, broadcastInt, wildcardInt,
+      totalAddresses, usable, firstUsable, lastUsable,
+    };
+  }
+
+  // ---------- Calculadora principal ----------
+  document.getElementById('calcBtn').addEventListener('click', runCalc);
+  function runCalc(){
+    const errEl = document.getElementById('calcError');
+    errEl.style.display = 'none';
+    try{
+      const ipStr = document.getElementById('ipInput').value;
+      const cidr = parseInt(document.getElementById('cidrInput').value, 10);
+      const r = computeSubnet(ipStr, cidr);
+      renderCalcResult(r);
+    } catch(e){
+      errEl.textContent = e.message;
+      errEl.style.display = 'block';
+      document.getElementById('calcResultCard').style.display = 'none';
+    }
+  }
+
+  function renderCalcResult(r){
+    const card = document.getElementById('calcResultCard');
+    card.style.display = 'block';
+    const priv = isPrivate(r.ip);
+
+    const items = [
+      ['Dirección de red', intToIp(r.networkInt)],
+      ['Broadcast', intToIp(r.broadcastInt)],
+      ['Máscara de subred', intToIp(r.maskInt)],
+      ['Máscara wildcard', intToIp(r.wildcardInt)],
+      ['Total de direcciones', r.totalAddresses.toLocaleString('es-CL')],
+      ['Hosts utilizables', r.usable.toLocaleString('es-CL')],
+      ['Primer host utilizable', r.usable > 0 ? intToIp(r.firstUsable) : '—'],
+      ['Último host utilizable', r.usable > 0 ? intToIp(r.lastUsable) : '—'],
+      ['Clase (histórica)', classify(r.ip[0])],
+    ];
+    document.getElementById('resultGrid').innerHTML = items.map(([label,value]) => `
+      <div class="result-item">
+        <div class="label">${label}</div>
+        <div class="value">${value}</div>
+      </div>`).join('') + `
+      <div class="result-item">
+        <div class="label">Tipo</div>
+        <div class="value"><span class="badge ${priv?'badge-private':'badge-public'}">${priv?'Privada':'Pública'}</span></div>
+      </div>`;
+
+    const ipBits = toBinary8(r.ip[0])+'.'+toBinary8(r.ip[1])+'.'+toBinary8(r.ip[2])+'.'+toBinary8(r.ip[3]);
+    const maskOctets = intToOctets(r.maskInt);
+    const maskBits = maskOctets.map(toBinary8).join('.');
+    document.getElementById('binaryBlock').innerHTML = `
+      <div class="row"><div class="k">IP</div><div>${colorizeBinary(ipBits, r.cidr)}</div></div>
+      <div class="row"><div class="k">Máscara</div><div>${maskBits}</div></div>
+    `;
+  }
+
+  function colorizeBinary(bitsStr, cidr){
+    const clean = bitsStr.replace(/\./g,'');
+    let out = '', bitCount = 0, dotsPassed = 0;
+    for(let i=0;i<bitsStr.length;i++){
+      const ch = bitsStr[i];
+      if(ch === '.'){ out += '.'; continue; }
+      out += `<span class="octet ${bitCount < cidr ? 'net' : 'host'}">${ch}</span>`;
+      bitCount++;
+    }
+    return out;
+  }
+
+  // ---------- Divisor de subredes ----------
+  document.getElementById('splitBtn').addEventListener('click', runSplit);
+  function runSplit(){
+    const errEl = document.getElementById('splitError');
+    errEl.style.display = 'none';
+    try{
+      const ipStr = document.getElementById('baseIp').value;
+      const baseCidr = parseInt(document.getElementById('baseCidr').value, 10);
+      const mode = document.getElementById('splitMode').value;
+      const value = parseInt(document.getElementById('splitValue').value, 10);
+      if(isNaN(value) || value < 1) throw new Error('Ingresa un número válido mayor a 0.');
+
+      const base = computeSubnet(ipStr, baseCidr);
+      let newCidr;
+      if(mode === 'subnets'){
+        const bitsNeeded = Math.ceil(Math.log2(value));
+        newCidr = baseCidr + bitsNeeded;
+      } else {
+        const bitsForHosts = Math.ceil(Math.log2(value + 2));
+        newCidr = 32 - bitsForHosts;
+      }
+      if(newCidr > 32 || newCidr < baseCidr) throw new Error('No es posible dividir la red base en esos términos — revisa los valores.');
+
+      const subnetSize = Math.pow(2, 32-newCidr);
+      const totalSubnets = Math.pow(2, newCidr-baseCidr);
+      const usablePerSubnet = newCidr >= 31 ? (newCidr===32?1:2) : subnetSize-2;
+
+      document.getElementById('splitSummary').textContent =
+        `Nuevo prefijo: /${newCidr} · ${totalSubnets.toLocaleString('es-CL')} subredes posibles · ${usablePerSubnet.toLocaleString('es-CL')} hosts utilizables cada una`;
+
+      const showCount = Math.min(totalSubnets, 50);
+      let rowsHtml = '';
+      for(let i=0;i<showCount;i++){
+        const netInt = (base.networkInt + i*subnetSize) >>> 0;
+        const bcastInt = (netInt + subnetSize - 1) >>> 0;
+        const firstUsable = newCidr >= 31 ? netInt : netInt+1;
+        const lastUsable = newCidr >= 31 ? bcastInt : bcastInt-1;
+        rowsHtml += `<tr>
+          <td>${intToIp(netInt)}/${newCidr}</td>
+          <td>${usablePerSubnet>0 ? intToIp(firstUsable)+' – '+intToIp(lastUsable) : '—'}</td>
+          <td>${intToIp(bcastInt)}</td>
+        </tr>`;
+      }
+      document.getElementById('splitTableBody').innerHTML = rowsHtml;
+      const moreHint = document.getElementById('moreHint');
+      if(totalSubnets > showCount){
+        moreHint.style.display = 'block';
+        moreHint.textContent = `Mostrando las primeras ${showCount} de ${totalSubnets.toLocaleString('es-CL')} subredes.`;
+      } else {
+        moreHint.style.display = 'none';
+      }
+      document.getElementById('splitResultCard').style.display = 'block';
+    } catch(e){
+      errEl.textContent = e.message;
+      errEl.style.display = 'block';
+      document.getElementById('splitResultCard').style.display = 'none';
+    }
+  }
+
+  // Calcular al cargar con los valores por defecto
+  runCalc();
+</script>
+
+</body>
+</html>
