@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Eduardo Andrés</title>
+<meta name="description" content="Espacio personal de Eduardo Andrés: aprendiendo ciencia de datos y DevOps/Cloud, armando PC y escuchando Arctic Monkeys." />
+<meta property="og:title" content="Eduardo Andrés" />
+<meta property="og:description" content="Técnico en telecomunicaciones aprendiendo ciencia de datos y DevOps/Cloud. PC propio y rock." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#1B1712" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231B1712'/%3E%3Crect x='4' y='16' width='4' height='12' rx='1' fill='%23B84B32'/%3E%3Crect x='11' y='8' width='4' height='20' rx='1' fill='%23E8A33D'/%3E%3Crect x='18' y='13' width='4' height='15' rx='1' fill='%23B84B32'/%3E%3Crect x='25' y='5' width='4' height='23' rx='1' fill='%23E8A33D'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1B1712;
+    --surface:#241F18;
+    --surface2:#2C2519;
+    --line:#3A3226;
+    --amber:#E8A33D;
+    --rust:#B84B32;
+    --text:#F2ECE1;
+    --muted:#9C9284;
+  }
+  html[data-theme="light"]{
+    --bg:#F2ECE1;
+    --surface:#FFFFFF;
+    --surface2:#EAE2D2;
+    --line:#D9CDB4;
+    --amber:#C97A1E;
+    --rust:#A23A24;
+    --text:#241F18;
+    --muted:#726A5A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+    transition:background .3s ease, color .3s ease;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.75rem;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    color:var(--amber);
+  }
+  h1,h2,h3{font-family:'Oswald',sans-serif; font-weight:600; letter-spacing:0.01em;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 1.5rem;}
+  a{color:var(--amber); text-decoration:none;}
+
+  /* EQ bars signature */
+  .eq{display:flex; align-items:flex-end; gap:5px; height:60px;}
+  .eq span{
+    width:6px; border-radius:2px;
+    background:linear-gradient(to top, var(--rust), var(--amber));
+    animation:bounce 1.1s ease-in-out infinite;
+  }
+  .eq span:nth-child(1){height:30%; animation-delay:0s;}
+  .eq span:nth-child(2){height:70%; animation-delay:.1s;}
+  .eq span:nth-child(3){height:45%; animation-delay:.2s;}
+  .eq span:nth-child(4){height:90%; animation-delay:.3s;}
+  .eq span:nth-child(5){height:55%; animation-delay:.15s;}
+  .eq span:nth-child(6){height:75%; animation-delay:.05s;}
+  .eq span:nth-child(7){height:35%; animation-delay:.25s;}
+  .eq span:nth-child(8){height:60%; animation-delay:.35s;}
+  @keyframes bounce{
+    0%,100%{transform:scaleY(0.4);}
+    50%{transform:scaleY(1);}
+  }
+
+  /* Hero */
+  .hero{
+    min-height:92vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding-top:3rem; padding-bottom:3rem;
+  }
+  .hero h1{
+    font-size:clamp(3rem, 11vw, 6.5rem);
+    line-height:0.95;
+    margin:0.6rem 0;
+  }
+  .hero p{color:var(--muted); font-size:1.05rem; max-width:520px; margin-top:0.75rem;}
+  .hero .eq{margin-top:2.5rem;}
+
+  section{padding:5rem 0; border-top:1px solid var(--line);}
+  .kicker{display:flex; align-items:center; gap:0.75rem; margin-bottom:1.75rem;}
+  .kicker .dot{width:8px; height:8px; border-radius:50%; background:var(--rust);}
+  .kicker h2{font-size:1.6rem; color:var(--text);}
+
+  /* Sobre mí */
+  .about p{color:var(--muted); line-height:1.75; max-width:640px; font-size:1.02rem;}
+  .about p + p{margin-top:1rem;}
+  .tags{display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1.5rem;}
+  .tag{
+    font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+    border:1px solid var(--line); color:var(--amber);
+    padding:0.35rem 0.75rem; border-radius:999px;
+  }
+
+  /* Estudios */
+  .stage-row{display:flex; align-items:center; gap:0; margin-top:2rem;}
+  .stage{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:1.25rem 1.5rem; flex:1;
+  }
+  .stage.active{border-color:var(--amber);}
+  .stage .n{font-family:'IBM Plex Mono',monospace; color:var(--muted); font-size:0.75rem;}
+  .stage h3{font-size:1.15rem; margin-top:0.3rem;}
+  .stage p{color:var(--muted); font-size:0.9rem; margin-top:0.4rem;}
+  .arrow{color:var(--rust); font-size:1.5rem; padding:0 0.75rem; flex-shrink:0;}
+  @media (max-width:640px){
+    .stage-row{flex-direction:column; align-items:stretch;}
+    .arrow{transform:rotate(90deg); padding:0.5rem 0; align-self:center;}
+  }
+  .study-list{margin-top:2rem; display:flex; flex-direction:column; gap:0.6rem;}
+  .study-item{
+    display:flex; align-items:baseline; gap:0.75rem;
+    font-family:'IBM Plex Mono',monospace; font-size:0.9rem; color:var(--muted);
+  }
+  .study-item::before{content:"›"; color:var(--rust);}
+
+  /* Música */
+  .music-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;
+  }
+  .music-card .eq{height:34px;}
+  .music-card .label{display:flex; align-items:center; gap:1.25rem;}
+  .music-card h3{font-size:1.5rem;}
+  .music-card p{color:var(--muted); margin-top:0.3rem; font-size:0.95rem;}
+  .music-card iframe{border-radius:10px; border:none; width:100%;}
+
+  /* Proyectos */
+  .projects{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.25rem; margin-top:2rem;}
+  .project-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:1.5rem; display:flex; flex-direction:column; gap:0.9rem;
+    transition:border-color .2s, transform .2s;
+  }
+  .project-card:hover{border-color:var(--amber); transform:translateY(-2px);}
+  .project-card .ptag{font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--rust); text-transform:uppercase; letter-spacing:0.1em;}
+  .project-card h3{font-size:1.3rem;}
+  .project-card p{color:var(--muted); font-size:0.92rem; line-height:1.6;}
+  .project-card .bar-wrap{margin-top:0.3rem;}
+  .project-card .bar{height:6px; background:var(--line); border-radius:99px; overflow:hidden;}
+  .project-card .bar > div{height:100%; background:linear-gradient(to right, var(--rust), var(--amber));}
+  .project-card .bar-label{display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--muted); margin-top:0.4rem;}
+  .project-card .plist{display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.2rem;}
+  .project-card .plist span{
+    font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--text);
+    background:var(--surface2); border:1px solid var(--line); padding:0.2rem 0.55rem; border-radius:6px;
+  }
+
+  /* Redes */
+  .links{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; margin-top:2rem;}
+  .link-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:1.25rem 1.5rem; display:flex; justify-content:space-between; align-items:center;
+    transition:border-color .2s, transform .2s;
+  }
+  .link-card:hover{border-color:var(--amber); transform:translateY(-2px);}
+  .link-card .platform{font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em;}
+  .link-card .handle{font-size:1.05rem; color:var(--text); margin-top:0.2rem; font-weight:500;}
+  .link-card .go{color:var(--rust); font-size:1.3rem;}
+
+  footer{
+    padding:3rem 0 2.5rem; text-align:center; color:var(--muted);
+    font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+  }
+
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.visible{opacity:1; transform:translateY(0);}
+
+  /* Toggle de tema */
+  .theme-toggle{
+    position:fixed; top:1.25rem; right:1.25rem; z-index:10;
+    width:42px; height:42px; border-radius:50%;
+    background:var(--surface); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:1.1rem; color:var(--amber);
+    transition:border-color .2s, background .3s ease;
+  }
+  .theme-toggle:hover{border-color:var(--amber);}
+
+  /* Bitácora */
+  .log-list{display:flex; flex-direction:column; gap:1.25rem; margin-top:2rem;}
+  .log-entry{
+    display:flex; gap:1.25rem; padding-bottom:1.25rem; border-bottom:1px solid var(--line);
+  }
+  .log-entry:last-child{border-bottom:none; padding-bottom:0;}
+  .log-entry .log-date{
+    font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--rust);
+    white-space:nowrap; padding-top:0.2rem; min-width:70px;
+  }
+  .log-entry h3{font-size:1.05rem; margin-bottom:0.3rem;}
+  .log-entry p{color:var(--muted); font-size:0.92rem; line-height:1.6;}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">🌙</button>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">técnico en telecomunicaciones</div>
+    <h1>Eduardo<br/>Andrés</h1>
+    <p>Me gusta entender cómo funcionan las cosas por dentro — desde armar un PC pieza por pieza hasta aprender a leer datos. Acá voy dejando registro de lo que aprendo, lo que escucho y dónde encontrarme.</p>
+    <div class="eq">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker"><div class="dot"></div><h2>Sobre mí</h2></div>
+    <div class="about">
+      <p>Soy técnico medio en telecomunicaciones y siempre me han gustado los PC y la informática, así que decidí ir más a fondo: hoy estoy formándome como científico de datos, con DevOps y Cloud como siguiente parada.</p>
+      <p>En paralelo, ando armando mi propio PC pieza por pieza.</p>
+    </div>
+    <div class="tags">
+      <span class="tag">Linux</span>
+      <span class="tag">Python</span>
+      <span class="tag">Hardware</span>
+      <span class="tag">Rock</span>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker"><div class="dot"></div><h2>En qué estoy</h2></div>
+    <div class="stage-row">
+      <div class="stage active">
+        <div class="n">ETAPA 01</div>
+        <h3>Ciencia de Datos</h3>
+        <p>Python, estadística y el curso de IBM Data Science en Coursera.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage">
+        <div class="n">ETAPA 02</div>
+        <h3>DevOps / Cloud</h3>
+        <p>Siguiente etapa, una vez que afiance las bases.</p>
+      </div>
+    </div>
+    <div class="study-list">
+      <div class="study-item">Entorno de trabajo con Miniconda sobre Linux</div>
+      <div class="study-item">Fundamentos de Python para análisis de datos</div>
+      <div class="study-item">Curso IBM Data Science — Coursera</div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker"><div class="dot"></div><h2>Bitácora</h2></div>
+    <div class="log-list">
+      <div class="log-entry">
+        <div class="log-date">AGO 2026</div>
+        <div>
+          <h3>Entorno listo</h3>
+          <p>Instalé y configuré Miniconda sobre Linux — la base para todo lo que viene en ciencia de datos.</p>
+        </div>
+      </div>
+      <div class="log-entry">
+        <div class="log-date">AGO 2026</div>
+        <div>
+          <h3>Arrancó el plan de estudio</h3>
+          <p>Definí el camino: primero ciencia de datos a fondo, después DevOps/Cloud. Partiendo con Python, estadística y el curso de IBM en Coursera.</p>
+        </div>
+      </div>
+      <div class="log-entry">
+        <div class="log-date">AGO 2026</div>
+        <div>
+          <h3>Piezas del PC en camino</h3>
+          <p>Ya tengo procesador, gabinete, placa madre, fuente y la primera RAM. El resto llega pronto para terminar el armado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker"><div class="dot"></div><h2>Proyectos de la comunidad</h2></div>
+    <p style="color:var(--muted); max-width:640px; margin-bottom:0.5rem;">Algunos proyectos open source que valen la pena — hechos por otros, para que muchos puedan usarlos.</p>
+    <div class="projects">
+      <a class="project-card" href="https://github.com/NationalSecurityAgency/ghidra" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="ptag">Ciberseguridad</div>
+        <h3>Ghidra</h3>
+        <p>Suite de ingeniería inversa liberada por la NSA. Referencia obligada para análisis de malware y binarios.</p>
+        <div class="plist"><span>NationalSecurityAgency/ghidra</span></div>
+      </a>
+      <a class="project-card" href="https://github.com/zaproxy/zaproxy" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="ptag">Ciberseguridad</div>
+        <h3>OWASP ZAP</h3>
+        <p>Escáner de seguridad para aplicaciones web, mantenido por la comunidad OWASP. Gratuito y muy usado por profesionales.</p>
+        <div class="plist"><span>zaproxy/zaproxy</span></div>
+      </a>
+      <a class="project-card" href="https://github.com/pandas-dev/pandas" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="ptag">Ciencia de Datos</div>
+        <h3>pandas</h3>
+        <p>La librería base para análisis de datos en Python. Prácticamente todo científico de datos pasa por aquí.</p>
+        <div class="plist"><span>pandas-dev/pandas</span></div>
+      </a>
+      <a class="project-card" href="https://github.com/scikit-learn/scikit-learn" target="_blank" rel="noopener" style="text-decoration:none;">
+        <div class="ptag">Ciencia de Datos</div>
+        <h3>scikit-learn</h3>
+        <p>Machine learning en Python, accesible y bien documentado. El punto de entrada de muchos al ML real.</p>
+        <div class="plist"><span>scikit-learn/scikit-learn</span></div>
+      </a>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker"><div class="dot"></div><h2>Mis proyectos</h2></div>
+    <div class="projects">
+      <div class="project-card">
+        <div class="ptag">Hardware</div>
+        <h3>PC de estudio</h3>
+        <p>Armado propio con presupuesto de $600.000 CLP, pensado para ciencia de datos: Ryzen 7 5700G, SSD de 1TB y RAM Kingston Fury Beast RGB.</p>
+        <div class="plist"><span>Ryzen 7 5700G</span><span>SSD 1TB</span><span>DDR4-3200</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker"><div class="dot"></div><h2>Encuéntrame</h2></div>
+    <div class="links">
+      <a class="link-card" href="https://x.com/Andres16Hc" target="_blank" rel="noopener">
+        <div>
+          <div class="platform">X</div>
+          <div class="handle">@Andres16Hc</div>
+        </div>
+        <div class="go">↗</div>
+      </a>
+      <a class="link-card" href="https://instagram.com/eduardo_andres16" target="_blank" rel="noopener">
+        <div>
+          <div class="platform">Instagram</div>
+          <div class="handle">@eduardo_andres16</div>
+        </div>
+        <div class="go">↗</div>
+      </a>
+      <a class="link-card" href="https://github.com/Reeks12" target="_blank" rel="noopener">
+        <div>
+          <div class="platform">GitHub</div>
+          <div class="handle">Reeks12</div>
+        </div>
+        <div class="go">↗</div>
+      </a>
+    </div>
+  </section>
+
+  <footer>Eduardo Andrés — hecho pieza por pieza, como el PC.</footer>
+</div>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, {threshold:0.15});
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  const themeToggle = document.getElementById('themeToggle');
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme === 'light'){
+    document.documentElement.setAttribute('data-theme','light');
+    themeToggle.textContent = '☀️';
+  }
+  themeToggle.addEventListener('click', () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if(isLight){
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme','dark');
+      themeToggle.textContent = '🌙';
+    } else {
+      document.documentElement.setAttribute('data-theme','light');
+      localStorage.setItem('theme','light');
+      themeToggle.textContent = '☀️';
+    }
+  });
+</script>
+
+</body>
+</html>
