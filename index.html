@@ -106,6 +106,21 @@
     padding:0.35rem 0.75rem; border-radius:999px;
   }
 
+  /* Tech stack */
+  .stack-group{margin-top:1.5rem;}
+  .stack-group:first-child{margin-top:0;}
+  .stack-group .stack-label{
+    font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--rust);
+    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.6rem;
+  }
+  .stack-pills{display:flex; flex-wrap:wrap; gap:0.5rem;}
+  .stack-pill{
+    font-family:'IBM Plex Mono',monospace; font-size:0.82rem;
+    background:var(--surface2); border:1px solid var(--line); color:var(--text);
+    padding:0.4rem 0.8rem; border-radius:8px;
+  }
+  .stack-pill.learning{color:var(--amber); border-color:var(--amber); border-style:dashed;}
+
   /* Estudios */
   .stage-row{display:flex; align-items:center; gap:0; margin-top:2rem;}
   .stage{
@@ -256,6 +271,46 @@
   </section>
 
   <section class="reveal">
+    <div class="kicker"><div class="dot"></div><h2>Tech Stack</h2></div>
+    <div class="stack-group">
+      <div class="stack-label">Sistemas y herramientas</div>
+      <div class="stack-pills">
+        <span class="stack-pill">Linux</span>
+        <span class="stack-pill">Bash</span>
+        <span class="stack-pill">Git</span>
+        <span class="stack-pill">GitHub</span>
+        <span class="stack-pill">Miniconda</span>
+      </div>
+    </div>
+    <div class="stack-group">
+      <div class="stack-label">Lenguajes</div>
+      <div class="stack-pills">
+        <span class="stack-pill">Python</span>
+        <span class="stack-pill">HTML / CSS</span>
+        <span class="stack-pill">JavaScript</span>
+      </div>
+    </div>
+    <div class="stack-group">
+      <div class="stack-label">Datos</div>
+      <div class="stack-pills">
+        <span class="stack-pill">pandas</span>
+        <span class="stack-pill">scikit-learn</span>
+        <span class="stack-pill">SQL</span>
+      </div>
+    </div>
+    <div class="stack-group">
+      <div class="stack-label">Aprendiendo ahora — DevOps / Cloud</div>
+      <div class="stack-pills">
+        <span class="stack-pill learning">Docker</span>
+        <span class="stack-pill learning">Kubernetes</span>
+        <span class="stack-pill learning">Terraform</span>
+        <span class="stack-pill learning">AWS</span>
+        <span class="stack-pill learning">GitHub Actions</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
     <div class="kicker"><div class="dot"></div><h2>Bitácora</h2></div>
     <div class="log-list">
       <div class="log-entry">
@@ -326,6 +381,12 @@
         <div class="ptag">Herramienta</div>
         <h3>Analizador de CSV</h3>
         <p>Sube un dataset y obtén estadísticas por columna, vista previa y gráficos al instante. Todo corre en el navegador.</p>
+        <div class="plist"><span>Abrir herramienta →</span></div>
+      </a>
+      <a class="project-card" href="calculadora-subredes.html" style="text-decoration:none;">
+        <div class="ptag">Herramienta</div>
+        <h3>Calculadora de Subredes</h3>
+        <p>IP + CIDR → máscara, rango de red, hosts disponibles, y un planificador para dividir una red en subredes.</p>
         <div class="plist"><span>Abrir herramienta →</span></div>
       </a>
     </div>
